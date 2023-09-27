@@ -1,7 +1,10 @@
 package ru.spbu.apcyb.svp.tasks.task1;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class is needed exclusively for the implementation of the key method.
@@ -13,74 +16,77 @@ import java.util.Objects;
 
 public class SumExchange {
 
-  private final int sum;
-  private final List<Integer> denominations;
+  public static final Logger logger = Logger.getLogger(SumExchange.class.getName());
 
-  public SumExchange(int sum, List<Integer> denominations) {
+  private final long sum;
+  private final List<Long> denominations;
+  private final List<long[]> combinations;
+  private long countOfCombination = 0;
+
+  /**
+   * Constructor - creating a new storage object. In it object we store the processed input data. It
+   * performs the main exchange method.
+   *
+   * @param sum          the number to be exchanged
+   * @param denomination the nominal value of the received coins
+   */
+
+  public SumExchange(long sum, List<Long> denomination) {
     this.sum = sum;
-    this.denominations = denominations;
+    this.denominations = denomination;
+    combinations = new ArrayList<>();
   }
 
   /**
    * The method of finding all possible exchange options.
-   *
-   * @return All possible exchange options
+   * <br>
+   * By recursion at denominations
+   * <br>
+   * {@link #allCombinationOfExchanges allCombinationOfExchanges} method performs the main role
    */
+  public void getAllCombinations() {
+    allCombinationOfExchanges(sum, new long[denominations.size()], 0);
+    logger.log(Level.INFO, "Count of combination : {0}", countOfCombination);
+  }
 
-  public Combinations allCombinationsOfExchanges() {
+  public List<long[]> getAllCombinationsWithList() {
+    allCombinationOfExchanges(sum, new long[denominations.size()], 0);
+    return combinations;
+  }
 
-    Combinations[][] combinations = new Combinations[denominations.size()][sum + 1];
-    combinations[0][0] = new Combinations();
-    combinations[0][0].add(new Combination());
+  private void allCombinationOfExchanges(long currentAmount, long[] nominalCount, int indexOfCoin) {
 
-    for (int i = 0; i < sum; i++) {
-      for (int j = 0; j < denominations.size(); j++) {
-        for (int k = j; k < denominations.size(); k++) {
+    long numberOfOccurrenceCoins = sum
+        / denominations.get(indexOfCoin);
 
-          if (i + denominations.get(k) <= sum) {
+    for (long i = 0; i <= numberOfOccurrenceCoins; i++) {
+      if (currentAmount >= 0) {
+        nominalCount[indexOfCoin] = i;
 
-            if (combinations[k][i + denominations.get(k)] == null) {
-              combinations[k][i + denominations.get(k)] = new Combinations();
-            }
-            combinations[k][i + denominations.get(k)].add(combinations[j][i]);
+        if (currentAmount == 0) {
+          countOfCombination++;
+          outputWithLogger(nominalCount);
+          if (countOfCombination < 1000) {
+            combinations.add(nominalCount);
           }
+        } else if (indexOfCoin + 1 < denominations.size()) {
+          allCombinationOfExchanges(currentAmount, nominalCount.clone(), indexOfCoin + 1);
         }
-        addNewCoinAtArrayOfCombinations(i, j, combinations);
-        combinations[j][i] = null;
+      }
+      currentAmount -= denominations.get(indexOfCoin);
+    }
+  }
+
+  private void outputWithLogger(long[] nominalsCount) {
+    logger.log(Level.INFO, "Combination number : {0}", countOfCombination);
+    for (int i = 0; i < nominalsCount.length; i++) {
+      int j = 0;
+      while (j < nominalsCount[i]) {
+        logger.log(Level.INFO, "{0}", denominations.get(i));
+        j++;
       }
     }
-    return addCombinationsInAnswer(combinations);
-  }
-
-  /**
-   * The method takes only complete lists of combinations from the array of all combinations.
-   * <br>
-   * And groups them together.
-   *
-   * @param combinations array of all combinations
-   * @return List of complete combinations of all possible numbers that make up the sum
-   */
-  private Combinations addCombinationsInAnswer(Combinations[][] combinations) {
-    Combinations answer = new Combinations();
-    for (int i = 0; i < denominations.size(); i++) {
-      answer.add(combinations[i][sum]);
-    }
-    return answer;
-  }
-
-  /**
-   * The method adds a new coin from the denominations to our combinations, if possible. Forming new
-   * combinations.
-   *
-   * @param i            column with numbers from 0 to the sum
-   * @param j            lines with nominal numbers
-   * @param combinations array of all combinations
-   */
-
-  private void addNewCoinAtArrayOfCombinations(int i, int j, Combinations[][] combinations) {
-    if (i + denominations.get(j) <= sum) {
-      combinations[j][i + denominations.get(j)].add(denominations.get(j));
-    }
+    logger.info("End of combination");
   }
 
   @Override
@@ -92,11 +98,13 @@ public class SumExchange {
       return false;
     }
     SumExchange that = (SumExchange) o;
-    return sum == that.sum && Objects.equals(denominations, that.denominations);
+    return sum == that.sum && countOfCombination == that.countOfCombination
+        && Objects.equals(denominations, that.denominations) && Objects.equals(
+        combinations, that.combinations);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(sum, denominations);
+    return Objects.hash(sum, denominations, combinations, countOfCombination);
   }
 }

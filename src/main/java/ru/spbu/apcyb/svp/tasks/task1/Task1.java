@@ -19,6 +19,7 @@ public class Task1 {
 
   public static final Logger logger = Logger.getLogger(Task1.class.getName());
 
+
   /**
    * Here start point of the program.
    *
@@ -27,8 +28,7 @@ public class Task1 {
   public static void main(String[] args) {
     Task1 task1 = new Task1();
     SumExchange sumExchange = task1.splitAndSortData();
-    Combinations combinations = sumExchange.allCombinationsOfExchanges();
-    task1.outputWithLogger(combinations);
+    sumExchange.getAllCombinations();
   }
 
   /**
@@ -55,21 +55,39 @@ public class Task1 {
    * @return list Integer
    */
 
-  public List<Integer> transformInputLineToIntegerList() {
+  public List<Long> transformInputLineToLongList() {
     String lineInput = inputData();
 
     if (lineInput == null) {
       throw new NullPointerException("Ошибка ввода");
     }
+    if (lineInput.charAt(0) == ' ') {
+      throw new IllegalArgumentException("Пропущена сумма размена");
+    }
     String[] arrayOfStringNumber = lineInput.trim().split(" ");
 
     if (arrayOfStringNumber.length < 2) {
-      throw new ArrayIndexOutOfBoundsException("Введено недостаточно цифр");
+      throw new IllegalArgumentException("Введено недостаточно цифр");
+    }
+    if (!checkFormatInputNumbers(arrayOfStringNumber)) {
+      throw new NumberFormatException("Неправильный ввод цифр");
     }
     return Arrays.stream(arrayOfStringNumber)
-        .map(Integer::parseInt)
+        .map(Long::parseLong)
         .toList();
   }
+
+  private boolean checkFormatInputNumbers(String[] denominations) {
+    for (String string : denominations) {
+      for (char ch : string.toCharArray()) {
+        if (!Character.isDigit(ch) && ch != '-') {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
 
   /**
    * The method divides the data into an amount and a set of nominal coins.
@@ -81,13 +99,17 @@ public class Task1 {
    */
 
   public SumExchange splitAndSortData() {
-    List<Integer> arrayOfNumber = transformInputLineToIntegerList();
-    List<Integer> denominations = new ArrayList<>(arrayOfNumber);
+    List<Long> arrayOfNumber = transformInputLineToLongList();
+    List<Long> denominations = new ArrayList<>(arrayOfNumber);
 
-    int sum = arrayOfNumber.get(0);
+    long sum = arrayOfNumber.get(0);
     denominations.remove(0);
-    if (sum < 0) {
-      throw new ArithmeticException("Сумма меньше нуля");
+
+    if (sum <= 0) {
+      throw new ArithmeticException("Сумма меньше нуля, либо равна нулю");
+    }
+    if (!checkingSignOfNumbers(denominations)) {
+      throw new ArithmeticException("Номинал меньше либо равен нулю");
     }
 
     Collections.sort(denominations);
@@ -95,13 +117,13 @@ public class Task1 {
     return new SumExchange(sum, denominations);
   }
 
-  private void outputWithLogger(Combinations combinations) {
-    String listSize = String.valueOf(combinations.getListOfCombinations().size());
-    logger.info(listSize);
-
-    for (Combination combination : combinations.getListOfCombinations()) {
-      String stringCombination = combination.toString();
-      logger.info(stringCombination);
+  private boolean checkingSignOfNumbers(List<Long> denominations) {
+    for (Long el : denominations) {
+      if (el <= 0) {
+        return false;
+      }
     }
+    return true;
   }
 }
+
