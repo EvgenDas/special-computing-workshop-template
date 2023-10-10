@@ -248,7 +248,6 @@ public class MyArrayList<E> implements List<E>, Iterable<E> {
       return false;
     }
     MyArrayList<?> that = (MyArrayList<?>) o;
-
     if (size == that.size) {
       for (int i = 0; i < size; i++) {
         if (!values[i].equals(that.values[i])) {
@@ -262,9 +261,7 @@ public class MyArrayList<E> implements List<E>, Iterable<E> {
 
   @Override
   public int hashCode() {
-    int result = Objects.hash(size);
-    result = 31 * result;
-    return result;
+    return iterator().hashCode();
   }
 
   @Override
