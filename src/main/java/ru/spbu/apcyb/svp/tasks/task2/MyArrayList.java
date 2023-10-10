@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -14,7 +15,6 @@ import java.util.logging.Logger;
  * @param <E> generic
  * @author Evgeny
  */
-
 public class MyArrayList<E> implements List<E>, Iterable<E> {
 
   private static final int DEFAULT_CAPACITY = 8;
@@ -95,7 +95,14 @@ public class MyArrayList<E> implements List<E>, Iterable<E> {
    */
 
   private void grow() {
-    capacity *= 2;
+    if (capacity < Integer.MAX_VALUE / 2) {
+      capacity *= 2;
+    } else if (capacity < Integer.MAX_VALUE) {
+      capacity = Integer.MAX_VALUE;
+    } else {
+      logger.log(Level.INFO, "невозможно увеличить вместимость MyArrayList");
+      throw new IndexOutOfBoundsException("capacity == Integer.MAX_VALUE");
+    }
     E[] newArray = (E[]) new Object[capacity];
     System.arraycopy(values, 0, newArray, 0, size);
     values = newArray;
@@ -137,14 +144,10 @@ public class MyArrayList<E> implements List<E>, Iterable<E> {
   @Override
   public void add(int index, E element) {
     Objects.checkIndex(index, size);
-
     if (size + 1 >= capacity) {
       grow();
     }
-
-    for (int i = size; i >= index; i--) {
-      values[i + 1] = values[i];
-    }
+    System.arraycopy(values, index, values, index + 1, size - index);
     size++;
     values[index] = element;
   }
