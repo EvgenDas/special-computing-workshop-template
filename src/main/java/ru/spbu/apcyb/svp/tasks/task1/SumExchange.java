@@ -106,5 +106,7 @@ public class SumExchange {
   @Override
   public int hashCode() {
     return Objects.hash(sum, denominations, combinations, countOfCombination);
+
+
   }
 }

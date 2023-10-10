@@ -11,7 +11,8 @@ import java.util.Objects;
  * @author Evgeny
  */
 
-public class MyArrayIterator<E> implements Iterator<E> {
+public class
+MyArrayIterator<E> implements Iterator<E> {
 
   private int index = 0;
   E[] values;
