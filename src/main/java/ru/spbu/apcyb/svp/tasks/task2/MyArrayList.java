@@ -222,7 +222,7 @@ public class MyArrayList<E> implements List<E>, Iterable<E> {
    *
    * @param o element to search for
    * @return the index of the first occurrence of the specified element in this list. or -1 if this
-   * list does not contain the element
+   *      list does not contain the element
    */
   @Override
   public int indexOf(Object o) {
