@@ -1,0 +1,4 @@
+Директория: src\main\java\ru\spbu\apcyb\svp\tasks\task3
+Файл: src\main\java\ru\spbu\apcyb\svp\tasks\task3\DriveQuickstart.java
+Файл: src\main\java\ru\spbu\apcyb\svp\tasks\task3\FileTreeScan.java
+Файл: src\main\java\ru\spbu\apcyb\svp\tasks\task3\MyFileVisitor.java

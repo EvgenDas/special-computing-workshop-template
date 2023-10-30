@@ -1,0 +1,13 @@
+Директория: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks
+Файл: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\ExampleMainClass.java
+Директория: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task1
+Файл: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task1\SumExchange.java
+Файл: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task1\Task1.java
+Директория: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task2
+Файл: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task2\MyArrayIterator.java
+Файл: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task2\MyArrayList.java
+Файл: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task2\MyStack.java
+Директория: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task3
+Файл: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task3\DriveQuickstart.java
+Файл: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task3\FileTreeScan.java
+Файл: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task3\MyFileVisitor.java
