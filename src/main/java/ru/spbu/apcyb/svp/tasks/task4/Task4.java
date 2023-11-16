@@ -20,8 +20,17 @@ import java.util.concurrent.ForkJoinTask;
  */
 public class Task4 {
 
-  private List<Double> listOfInputData;
-  private List<Double> listOfOutputDataMultithreading;
+  private final File inputFile;
+  private File outputFile;
+
+  public Task4(File inputFile, File outputFile) {
+    this.inputFile = inputFile;
+    this.outputFile = outputFile;
+  }
+
+  public Task4(File inputFile) {
+    this.inputFile = inputFile;
+  }
 
   /**
    * The starting point for the start of the program.
@@ -34,44 +43,41 @@ public class Task4 {
   public static void main(String... args)
       throws IOException, ExecutionException, InterruptedException {
 
-    Task4 task4 = new Task4();
-    task4.calculateTangentsFileToFile(new File(args[0]), new File(args[1]));
+    Task4 task4 = new Task4(new File(args[0]), new File(args[1]));
+    task4.calculateTangentsFileToFile();
   }
 
   /**
-   * A method that reads data from an input file
-   * calculates the tangent of numbers and writes it to
+   * A method that reads data from an input file calculates the tangent of numbers and writes it to
    * an output file.
    *
-   * @param inputFile  input file containing double elements
-   * @param outputFile output file
-   * @throws IOException          file reading error
-   * @throws ExecutionException   error starting threads
-   * @throws InterruptedException interrupting the thread
+   * @throws IOException file reading error
    */
-  public void calculateTangentsFileToFile(File inputFile, File outputFile)
-      throws IOException, ExecutionException, InterruptedException {
-
-    readData(inputFile);
-    calculateTangentByForkJoinPool(10);
-    writeData(outputFile);
-  }
-
-  private void readData(File file) throws IOException {
-    listOfInputData = new ArrayList<>();
+  private List<Double> readData() throws IOException {
+    List<Double> listOfInputData = new ArrayList<>();
     try (DataInputStream dataInputStream =
-        new DataInputStream(new FileInputStream(file))) {
+        new DataInputStream(new FileInputStream(inputFile))) {
       while (dataInputStream.available() > 0) {
         listOfInputData.add(dataInputStream.readDouble());
       }
+      return listOfInputData;
     } catch (IOException exception) {
       throw new IOException("Произошла ошибка при чтении данных из файла");
     }
   }
 
-  private void writeData(File file) throws IOException {
+  /**
+   * Method of writing the calculated tangents to the output file.
+   *
+   * @throws IOException          file reading error
+   * @throws ExecutionException   error starting threads
+   * @throws InterruptedException interrupting the thread
+   */
+  public void calculateTangentsFileToFile()
+      throws IOException, ExecutionException, InterruptedException {
+    List<Double> listOfOutputDataMultithreading = calculateTangentByForkJoinPool(10);
     try (DataOutputStream dataOutputStream =
-        new DataOutputStream(new FileOutputStream(file))) {
+        new DataOutputStream(new FileOutputStream(outputFile))) {
       for (double arrayOfOutputDatum : listOfOutputDataMultithreading) {
         dataOutputStream.writeDouble(arrayOfOutputDatum);
       }
@@ -88,20 +94,17 @@ public class Task4 {
    * @throws ExecutionException   error starting threads
    * @throws InterruptedException interrupting the thread
    */
-  public void calculateTangentByForkJoinPool(int numberOfThread)
-      throws ExecutionException, InterruptedException {
+  public List<Double> calculateTangentByForkJoinPool(int numberOfThread)
+      throws ExecutionException, InterruptedException, IOException {
     ForkJoinTask<List<Double>> listOfCalculatedTangent;
+    List<Double> listOfInputData = readData();
     try (ForkJoinPool myPool = new ForkJoinPool(numberOfThread)) {
-      if (listOfInputData != null) {
-        listOfCalculatedTangent = myPool.submit(() ->
-            listOfInputData.parallelStream()
-                .map(Math::tan)
-                .toList());
-      } else {
-        throw new NullPointerException("Ошибка обработки данных: listOfInputData is null");
-      }
+      listOfCalculatedTangent = myPool.submit(() ->
+          listOfInputData.parallelStream()
+              .map(Math::tan)
+              .toList());
+      return listOfCalculatedTangent.get();
     }
-    listOfOutputDataMultithreading = listOfCalculatedTangent.get();
   }
 
   /**
@@ -109,25 +112,13 @@ public class Task4 {
    *
    * @return list of calculated tangents
    */
-
-  public List<Double> calculateTangentSingleThread() {
-    List<Double> listOfOutputDataSingleThread;
-    if (listOfInputData != null) {
-      listOfOutputDataSingleThread = listOfInputData.stream()
-          .map(Math::tan)
-          .toList();
-    } else {
-      throw new NullPointerException("Ошибка обработки данных: listOfInputData is null");
-    }
-    return listOfOutputDataSingleThread;
-  }
-
-  public void setListOfInputData(List<Double> listOfInputData) {
-    this.listOfInputData = listOfInputData;
-  }
-
-  public List<Double> getListOfOutputDataMultithreading() {
-    return listOfOutputDataMultithreading;
+  public List<Double> calculateTangentSingleThread() throws IOException {
+    List<Double> listOfCalculatedTangent;
+    List<Double> listOfInputData = readData();
+    listOfCalculatedTangent = listOfInputData.stream()
+        .map(Math::tan)
+        .toList();
+    return listOfCalculatedTangent;
   }
 }
 

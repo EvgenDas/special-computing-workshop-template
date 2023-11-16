@@ -11,3 +11,6 @@
 Файл: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task3\DriveQuickstart.java
 Файл: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task3\FileTreeScan.java
 Файл: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task3\MyFileVisitor.java
+Директория: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task4
+Файл: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task4\PerformanceComparison.java
+Файл: C:\Users\jdash\IdeaProjects\special-computing-workshop-template_new\src\main\java\ru\spbu\apcyb\svp\tasks\task4\Task4.java

@@ -1,7 +1,7 @@
 package ru.spbu.apcyb.svp.tasks.task4;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,30 +20,42 @@ public class PerformanceComparison {
    *
    * @param args command line values
    */
-  public static void main(String... args) {
+  public static void main(String... args) throws IOException {
+    File fileContainingOneDouble = new File(args[0]);
+    File fileContainingOneHundredDouble = new File(args[1]);
+    File fileContainingOneMillionDouble = new File(args[2]);
 
     PerformanceComparison performanceComparison = new PerformanceComparison();
+    performanceComparison.comparePerformanceOnTheseInputs(fileContainingOneDouble,
+        fileContainingOneHundredDouble, fileContainingOneMillionDouble);
+  }
 
-    performanceComparison.comparePerformanceMultithreadedAndSingleThreaded(1);
-    performanceComparison.comparePerformanceMultithreadedAndSingleThreaded(100);
-    performanceComparison.comparePerformanceMultithreadedAndSingleThreaded(1000000);
-    performanceComparison.comparePerformanceMultithreadedAndSingleThreaded(10000000);
+  /**
+   * Method of launching benchmarks.
+   *
+   * @param files Input files
+   */
+  public void comparePerformanceOnTheseInputs(File... files) throws IOException {
+    comparePerformanceMultithreadedAndSingleThreaded(files[0]);
+    comparePerformanceMultithreadedAndSingleThreaded(files[1]);
+    comparePerformanceMultithreadedAndSingleThreaded(files[2]);
   }
 
   /**
    * Method for displaying comparative tangent calculation records in multithreaded and
    * single-threaded modes.
    *
-   * @param sizeOfInputList size of the input list
+   * @param inputFile Input File containing Double
    */
 
-  public void comparePerformanceMultithreadedAndSingleThreaded(int sizeOfInputList) {
-    logger.log(Level.INFO, "size of input list: {0}", sizeOfInputList);
+  public void comparePerformanceMultithreadedAndSingleThreaded(File inputFile)
+      throws IOException {
+    logger.log(Level.INFO, "name of input file: {0}", inputFile.getName());
 
-    long multiThreadedResult = calculatePerformanceOfMultithreadedMethod(sizeOfInputList);
+    long multiThreadedResult = calculatePerformanceOfMultithreadedMethod(inputFile);
     logger.log(Level.INFO, "multithreaded result: {0} millisecond", multiThreadedResult);
 
-    long singleThreadedResult = calculatePerformanceSingleThreadedMethod(sizeOfInputList);
+    long singleThreadedResult = calculatePerformanceSingleThreadedMethod(inputFile);
     logger.log(Level.INFO, "singleThreaded result: {0} millisecond", singleThreadedResult);
   }
 
@@ -51,13 +63,11 @@ public class PerformanceComparison {
    * Calculating the running time of a method that calculates the tangent value in single-threaded
    * mode.
    *
-   * @param sizeOfInputList size of the input list
+   * @param inputFile Input File containing Double
    * @return method operation time in milliseconds
    */
-  public long calculatePerformanceSingleThreadedMethod(int sizeOfInputList) {
-    List<Double> list = getDoubleListOfGivenSize(sizeOfInputList);
-    Task4 task4 = new Task4();
-    task4.setListOfInputData(list);
+  public long calculatePerformanceSingleThreadedMethod(File inputFile) throws IOException {
+    Task4 task4 = new Task4(inputFile);
     long start;
     long end;
     start = System.currentTimeMillis();
@@ -70,14 +80,12 @@ public class PerformanceComparison {
    * Calculating the running time of a method that calculates the tangent value in multithreaded
    * mode.
    *
-   * @param sizeOfInputList size of the input list
+   * @param inputFile Input File containing Double
    * @return method operation time in milliseconds
    */
 
-  public long calculatePerformanceOfMultithreadedMethod(int sizeOfInputList) {
-    List<Double> list = getDoubleListOfGivenSize(sizeOfInputList);
-    Task4 task4 = new Task4();
-    task4.setListOfInputData(list);
+  public long calculatePerformanceOfMultithreadedMethod(File inputFile) throws IOException {
+    Task4 task4 = new Task4(inputFile);
     long start = 0;
     long end = 0;
     try {
@@ -92,17 +100,5 @@ public class PerformanceComparison {
       Thread.currentThread().interrupt();
     }
     return end - start;
-  }
-
-  private List<Double> getDoubleListOfGivenSize(int sizeOfInputList) {
-    if (sizeOfInputList < 1) {
-      throw new IllegalArgumentException("Неверно задан размер списка: "
-          + sizeOfInputList + " должен быть > 0");
-    }
-    List<Double> list = new ArrayList<>();
-    for (int i = 0; i < sizeOfInputList; i++) {
-      list.add(Math.random());
-    }
-    return list;
   }
 }
