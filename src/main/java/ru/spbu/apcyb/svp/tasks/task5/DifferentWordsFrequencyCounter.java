@@ -7,6 +7,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +34,10 @@ public class DifferentWordsFrequencyCounter {
    * @throws IOException file reading/writing error
    */
   public static void main(String... args) throws IOException {
+    if (args.length != 2) {
+      throw new IllegalArgumentException(
+          String.format("Number of arguments %d, expected 2", args.length));
+    }
     Path inputPath = Path.of(args[0]);
     Path outputPath = Path.of(args[1]);
 
@@ -91,12 +97,13 @@ public class DifferentWordsFrequencyCounter {
     Path directory = Path.of(outputFile.toString()
         .substring(0, outputFile.toString().lastIndexOf(".")));
 
-    try {
+    try (ExecutorService executorService = Executors.newFixedThreadPool(10)) {
       if (!Files.exists(directory)) {
         Files.createDirectory(directory);
       }
+
       words.forEach((word, iteration) -> CompletableFuture.runAsync(
-          () -> writeWordToIndividualFile(word, iteration, directory)).join());
+          () -> writeWordToIndividualFile(word, iteration, directory), executorService).join());
       logger.log(Level.INFO, "output directory {0}", directory);
       return directory;
     } catch (IOException ex) {
